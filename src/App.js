@@ -1,24 +1,82 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+
+import "./App.scss";
+import AppContext from "./contexts/AppContext";
+import Header from './components/Header';
+import SideNav from './components/SideNav';
+import HomePage from './pages/HomePage';
+import SurveyPage from './pages/SurveyPage';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  }
+});
 
 function App() {
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [message, setMessage] = useState({
+    text: "",
+    severity: "success",
+  });
+
+  const handleCloseMessage = () => {
+    setMessage({ text: "", severity: message.severity });
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setShowSnackbar(false);
+  };
+
+  //Show the snackbar when there's a message available
+  useEffect(() => {
+    if (message?.text) {
+      setShowSnackbar(true);
+    } else {
+      setShowSnackbar(false);
+    }
+  }, [message]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <ThemeProvider theme={darkTheme}>
+      <div id="app">
+        <AppContext.Provider
+          value={{ showSidebar, setShowSidebar, setMessage }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Header />
+          <div id="appContent">
+            <Router>
+              <Routes>
+                <Route path="/survey" element={<SurveyPage />} />
+                <Route path="/" element={<HomePage />} />
+              </Routes>
+              <SideNav />
+            </Router>
+          </div>
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+          >
+            <Alert
+              elevation={6}
+              variant="filled"
+              onClose={handleCloseMessage}
+              severity={message?.severity}
+            >
+              {message?.text}
+            </Alert>
+          </Snackbar>
+        </AppContext.Provider>
+      </div>
+    </ThemeProvider>
   );
 }
 

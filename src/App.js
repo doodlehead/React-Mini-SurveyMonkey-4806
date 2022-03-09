@@ -10,7 +10,8 @@ import AppContext from "./contexts/AppContext";
 import Header from './components/Header';
 import SideNav from './components/SideNav';
 import HomePage from './pages/HomePage';
-import SurveyPage from './pages/SurveyPage';
+import SurveyList from './pages/SurveyList';
+import EditSurvey from "./pages/EditSurvey";
 
 const darkTheme = createTheme({
   palette: {
@@ -54,7 +55,8 @@ function App() {
           <div id="appContent">
             <Router>
               <Routes>
-                <Route path="/survey" element={<SurveyPage />} />
+                <Route path="/survey" element={<SurveyList />} />
+                <Route path="/survey/:surveyId" element={<EditSurvey />} />
                 <Route path="/" element={<HomePage />} />
               </Routes>
               <SideNav />

@@ -12,6 +12,8 @@ import SideNav from './components/SideNav';
 import HomePage from './pages/HomePage';
 import SurveyList from './pages/SurveyList';
 import EditSurvey from "./pages/EditSurvey";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const darkTheme = createTheme({
   palette: {
@@ -21,6 +23,7 @@ const darkTheme = createTheme({
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [message, setMessage] = useState({
     text: "",
@@ -49,19 +52,23 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <div id="app">
         <AppContext.Provider
-          value={{ showSidebar, setShowSidebar, setMessage }}
+          value={{ showSidebar, setShowSidebar, loggedIn, setLoggedIn, setMessage }}
         >
+          <Router>
           <Header />
-          <div id="appContent">
-            <Router>
+            <div id="appContent">
+            
               <Routes>
                 <Route path="/survey" element={<SurveyList />} />
                 <Route path="/survey/:surveyId" element={<EditSurvey />} />
                 <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<Login />}/>
+                <Route path="/register" element={<Register />}/>
               </Routes>
               <SideNav />
-            </Router>
-          </div>
+            
+            </div>
+          </Router>
           <Snackbar
             open={showSnackbar}
             autoHideDuration={6000}

@@ -26,7 +26,7 @@ const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showSidebar, setShowSidebar } = useContext(AppContext);
-
+  
   useEffect(() => {
     setShowSidebar?.(false);
   }, [location]);

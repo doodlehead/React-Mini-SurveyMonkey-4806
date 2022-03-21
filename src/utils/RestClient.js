@@ -4,6 +4,8 @@ import axios from "axios";
  * The RestClient will contain all the REST calls the client needs. "Singleton" pattern
  */
 class RestClient {
+  
+
   constructor() {
     let baseURL = (process.env.NODE_ENV !== 'production') ?
       'http://localhost:8080/' : 'https://mini-surveymonkey-4806.herokuapp.com/'
@@ -11,6 +13,7 @@ class RestClient {
     this.axios = axios.create({
       baseURL,
       timeout: 1000,
+      withCredentials: true 
       // headers: {'X-Custom-Header': 'foobar'}
     });
   }
@@ -39,6 +42,23 @@ class RestClient {
 
   deleteQuestion(id) {
     return this.axios.delete(`/question/${id}`)
+  }
+
+  getQuestions(){
+    return this.axios.get('/question')
+  }
+
+  // Users
+  login(user){
+    return this.axios.post(`/login`, new URLSearchParams(user), { headers: { "Content-Type": "application/x-www-form-urlencoded" }})
+  }
+
+  register(user){
+    return this.axios.post(`/user`, user)
+  }
+
+  logout(user){
+    return this.axios.post('/logout')
   }
 }
 

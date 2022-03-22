@@ -14,15 +14,19 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   
   const navigate = useNavigate();
-  const {loggedIn, setLoggedIn} = React.useContext(AppContext);
+  const {setLoggedIn, setMessage} = React.useContext(AppContext);
   
   const handleLogin = async (event) => {
     event.preventDefault();
     const username = event.target.username.value;
     const password = event.target.password.value;
-    await RestClient.login({ username, password });
-    setLoggedIn(true);
-    navigate('/home');
+    RestClient.login({ username, password }).then(res => {
+      setLoggedIn(true);
+      navigate('/home');
+    }).catch(err => setMessage?.({
+      text: 'Login Failed',
+      severity: 'error'
+    }))
   };
 
   return (

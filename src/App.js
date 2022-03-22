@@ -14,6 +14,7 @@ import SurveyList from './pages/SurveyList';
 import EditSurvey from "./pages/EditSurvey";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AnswerSurvey from "./pages/AnswerSurvey"
 
 const darkTheme = createTheme({
   palette: {
@@ -61,6 +62,7 @@ function App() {
               <Routes>
                 <Route path="/survey" element={<SurveyList />} />
                 <Route path="/survey/:surveyId" element={<EditSurvey />} />
+                <Route path="/survey/:surveyId/progress" element={<AnswerSurvey/>}/>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<Login />}/>
                 <Route path="/register" element={<Register />}/>

@@ -56,6 +56,10 @@ const SurveyList = () => {
       }))
   }
 
+  const handleAnswerSurvey = id => {
+    navigate(`/survey/${id}/progress`)
+  }
+
   const handleEdit = id => {
     navigate(`/survey/${id}`)
   }
@@ -74,11 +78,9 @@ const SurveyList = () => {
           alignItems: 'center'
         }}>
         <Box sx={{ marginLeft: '12px' }}>{survey.id}.</Box>
-        <Box sx={{ flexGrow: 1 }}>
-          <Box>{survey.name}</Box>
-          <Typography>Number of questions: TODO?</Typography>
-          <Typography>Number of responses: TODO?</Typography>
-        </Box>
+        <Button sx={{ flexGrow: 1 }} onClick={()=> handleAnswerSurvey(survey.id)}>
+          {survey.name}
+        </Button>
         <IconButton
           color="inherit"
           onClick={() => handleDelete(survey.id)}

@@ -4,7 +4,7 @@ import axios from "axios";
  * The RestClient will contain all the REST calls the client needs. "Singleton" pattern
  */
 class RestClient {
-  
+
 
   constructor() {
     let baseURL = (process.env.NODE_ENV !== 'production') ?
@@ -13,7 +13,7 @@ class RestClient {
     this.axios = axios.create({
       baseURL,
       timeout: 1000,
-      withCredentials: true 
+      withCredentials: true
       // headers: {'X-Custom-Header': 'foobar'}
     });
   }
@@ -35,6 +35,15 @@ class RestClient {
     return this.axios.delete(`/survey/${id}`)
   }
 
+  answerSurvey(id, answer) {
+    return this.axios.post(`/answer/`, {
+      survey: {
+        id
+      },
+      answer
+    })
+  }
+
   // Questions
   createQuestion(payload) {
     return this.axios.post('/question', payload)
@@ -44,20 +53,20 @@ class RestClient {
     return this.axios.delete(`/question/${id}`)
   }
 
-  getQuestions(){
+  getQuestions() {
     return this.axios.get('/question')
   }
 
   // Users
-  login(user){
-    return this.axios.post(`/login`, new URLSearchParams(user), { headers: { "Content-Type": "application/x-www-form-urlencoded" }})
+  login(user) {
+    return this.axios.post(`/login`, new URLSearchParams(user), { headers: { "Content-Type": "application/x-www-form-urlencoded" } })
   }
 
-  register(user){
+  register(user) {
     return this.axios.post(`/user`, user)
   }
 
-  logout(user){
+  logout(user) {
     return this.axios.post('/logout')
   }
 }

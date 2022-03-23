@@ -10,16 +10,24 @@ import {
 
 import RestClient from '../utils/RestClient';
 import { useNavigate } from "react-router-dom";
+import AppContext from "../contexts/AppContext";
 
 const Register = (props) => {
   
   const navigate = useNavigate();
+  
+  const {setMessage} = React.useContext(AppContext);
+
   const handleRegister = async (event) => {
     event.preventDefault();
     const username = event.target.username.value;
     const password = event.target.password.value;
-    RestClient.register({ username, password });
-    navigate('/login');
+    RestClient.register({ username, password }).then(res => {
+      navigate('/login');
+    }).catch(err => setMessage?.({
+      text: 'Registered Failed',
+      severity: 'error'
+    }))
   };
 
   return (

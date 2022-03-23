@@ -86,13 +86,17 @@ const Question = ({ question, display, onDelete, onEdit, onAnswer }) => {
 
       } else if (question.type === 'RANGE') {
           const onRangeChange = e => {
+              if (e.target.value === ""){
+                  onAnswer(null);
+                  return;
+              }
+
               if (e.target.value > question.max){
                   e.target.value = question.max;
               } else if (e.target.value < question.min){
                   e.target.value = question.min;
-              } else {
-                  onAnswer(parseInt(e.target.value));
               }
+              onAnswer(parseInt(e.target.value));
           }
           return <FormControl fullWidth>
               <TextField

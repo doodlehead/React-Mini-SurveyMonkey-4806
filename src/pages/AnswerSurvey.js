@@ -14,7 +14,7 @@ import AppContext from '../contexts/AppContext';
 import NewQuestionDialog from '../components/NewQuestionDialog';
 import Question from '../components/Question';
 
-const EditSurvey = () => {
+const AnswerSurvey = () => {
   const appContext = useContext(AppContext);
   const params = useParams();
   const navigate = useNavigate();
@@ -73,4 +73,4 @@ const EditSurvey = () => {
   );
 }
 
-export default EditSurvey
+export default AnswerSurvey

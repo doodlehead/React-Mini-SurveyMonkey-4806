@@ -44,6 +44,14 @@ class RestClient {
     })
   }
 
+  getAnswersOfSurvey(id) {
+    return this.axios.get(`/survey/${id}/answer`);
+  }
+
+  closeSurvey(id) {
+    return this.axios.post(`/survey/${id}/close`)
+  }
+
   // Questions
   createQuestion(payload) {
     return this.axios.post('/question', payload)

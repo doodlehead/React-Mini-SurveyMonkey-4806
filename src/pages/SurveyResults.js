@@ -11,18 +11,17 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import RestClient from '../utils/RestClient';
 import AppContext from '../contexts/AppContext';
-import NewQuestionDialog from '../components/NewQuestionDialog';
 import Question from '../components/Question';
 
 const AnswerSurvey = () => {
   const appContext = useContext(AppContext);
   const params = useParams();
-  const navigate = useNavigate();
   const [survey, setSurvey] = useState(null)
-  const [answer, setAnswer] = useState([]);
+  const [answers, setAnswers] = useState([]);
   useEffect(() => {
     // Fetch the survey on load
     fetchSurvey()
+    fetchAnswers()
   }, []);
 
   // Get current survey and store in state
@@ -31,7 +30,6 @@ const AnswerSurvey = () => {
       .then(res => {
         console.log(res)
         setSurvey(res.data)
-        setAnswer(Array(res.data.questions.length).fill(null))
       })
       .catch(err => appContext.setMessage?.({
         text: 'Survey fetch failed',
@@ -39,36 +37,34 @@ const AnswerSurvey = () => {
       }))
   }
 
-  const answerSurvey = () => {
-    RestClient.answerSurvey(params.surveyId, answer)
+  const fetchAnswers = () => {
+    RestClient.getAnswersOfSurvey(params.surveyId)
       .then(res => {
-        navigate("/survey")
-        appContext.setMessage?.({
-          text: 'Survey Answered',
-          severity: 'success'
-        })
+        console.log(res.data)
+        setAnswers(res.data)
       })
       .catch(err => appContext.setMessage?.({
-        text: 'Survey Answering failed',
+        text: 'Survey answers fetch failed',
         severity: 'error'
       }))
   }
 
-
-  const onAnswer = (i, ans) => {
-    const answerCopy = [...answer];
-    answerCopy[i] = ans;
-    setAnswer(answerCopy);
+  const getAnswers = i => {
+    const temp = [];
+    for (const a of answers){
+      temp.push(a.answer[i])
+    }
+    return temp;
   }
 
   return (
     <Box sx={{ padding: '0 30px' }}>
       <h1>{survey?.name}</h1>
+      <h3>Total Answers {answers.length}</h3>
       <Box>
         {survey?.questions?.map((q, index) =>
-          <Question question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>)}
+          <Question question={q} displayType={"results"} answers={getAnswers(index)}/>)}
       </Box>
-      <Button onClick={answerSurvey} disabled={answer.some((ans) => {return ans === null || ans === ""})}>Submit</Button>
     </Box>
   );
 }

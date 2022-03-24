@@ -14,6 +14,8 @@ import AddIcon from '@mui/icons-material/Add';
 import RestClient from '../utils/RestClient';
 import AppContext from '../contexts/AppContext';
 import NewSurveyDialog from '../components/NewSurveyDialog';
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import AllOutIcon from '@mui/icons-material/AllOut';
 
 const useStyles = makeStyles({
 });
@@ -44,10 +46,9 @@ const SurveyList = () => {
   }
 
   // Delete the selected survey
-  const handleDelete = id => {
+  const handleDeleteSurvey = id => {
     RestClient.deleteSurvey(id)
       .then(res => {
-        console.log(res)
         fetchSurveys()
       })
       .catch(err => appContext.setMessage?.({
@@ -56,14 +57,54 @@ const SurveyList = () => {
       }))
   }
 
-  const handleAnswerSurvey = id => {
-    navigate(`/survey/${id}/progress`)
+  const handleCloseSurvey = id => {
+    RestClient.closeSurvey(id)
+      .then(res => {
+        fetchSurveys();
+      })
+      .catch(err => appContext.setMessage?.({
+        text: 'Survey close failed',
+        severity: 'error'
+      }))
   }
 
-  const handleEdit = id => {
+  const handleViewSurveyResults = id => {
+    RestClient.getAnswersOfSurvey(id)
+      .then(res => {
+        navigate(`/survey/${id}/results`);
+      })
+      .catch(err => appContext.setMessage?.({
+        text: 'Survey fetch failed',
+        severity: 'error'
+      }))
+  }
+
+  const handleAnswerSurvey = id => {
     navigate(`/survey/${id}`)
   }
 
+  const renderResultsButton = survey => {
+    if (survey.closed){
+      return (
+        <IconButton
+        color="inherit"
+        onClick={() => handleViewSurveyResults(survey.id)}
+        >
+          <AllOutIcon/>
+        </IconButton>
+      )
+    } else {
+      return (
+        <IconButton
+        color="inherit"
+        onClick={() => handleCloseSurvey(survey.id)}
+        >
+          <CancelPresentationIcon/>
+        </IconButton>
+      )
+    }
+  }
+    
   // Render a survey on the surveys page
   const renderSurvey = survey => {
     return (
@@ -78,32 +119,26 @@ const SurveyList = () => {
           alignItems: 'center'
         }}>
         <Box sx={{ marginLeft: '12px' }}>{survey.id}.</Box>
-        <Button sx={{ flexGrow: 1 }} onClick={()=> handleAnswerSurvey(survey.id)}>
+        <Button sx={{ flexGrow: 1 }} onClick={()=> handleAnswerSurvey(survey.id)} disabled={survey.closed}>
           {survey.name}
         </Button>
         <IconButton
           color="inherit"
-          onClick={() => handleDelete(survey.id)}
+          onClick={() => handleDeleteSurvey(survey.id)}
         >
           <DeleteIcon />
         </IconButton>
-        <IconButton
-          color="inherit"
-          onClick={() => handleEdit(survey.id)}
-        >
-          <EditIcon />
-        </IconButton>
+        {renderResultsButton(survey)}
       </Box>
     )
   };
 
-  const handleSubmit = name => {
+  const handleCreateSurvey = name => {
     // Perform the REST call
     RestClient.createSurvey(name)
-      .then(() => {
-        handleClose()
-        // Do another GET for surveys
-        fetchSurveys()
+      .then(res => {
+        setOpen(false);
+        navigate(`/survey/${res.data.id}/edit`)
       })
       .catch(err => appContext.setMessage?.({
         text: 'Survey creation failed',
@@ -111,19 +146,11 @@ const SurveyList = () => {
       }));
   }
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   return (
     <div>
       <h1>Surveys Page</h1>
-      <Button variant="outlined" startIcon={<AddIcon />} onClick={handleClickOpen} sx={{ marginBottom: '24px' }}>Create New Survey</Button>
-      <NewSurveyDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
+      <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setOpen(true)} sx={{ marginBottom: '24px' }}>Create New Survey</Button>
+      <NewSurveyDialog open={open} handleClose={() => setOpen(false)} handleSubmit={handleCreateSurvey} />
       <div>
         {surveys.length === 0 ?
           <Typography variant="body1">No surveys yet</Typography> : surveys.map(renderSurvey)}

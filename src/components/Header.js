@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -36,9 +36,23 @@ const Header = () => {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = React.useContext(AppContext);
 
+  useEffect(() => {
+    // Check login
+    if (window.localStorage.getItem('login') === 'true') {
+      setLoggedIn(true)
+    } else {
+      setLoggedIn(false)
+    }
+  }, []);
+
   const handleLogout = async() => {
-    await RestClient.logout();
-    setLoggedIn(false);
+    await RestClient.logout()
+      .then(res => {
+        window.localStorage.removeItem('login')
+        setLoggedIn(false);
+        navigate('/')
+      })
+      .catch()
   }
 
   return (

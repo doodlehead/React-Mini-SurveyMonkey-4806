@@ -59,7 +59,6 @@ function App() {
           <Router>
           <Header />
             <div id="appContent">
-            
               <Routes>
                 <Route path="/survey" element={<SurveyList />} />
                 <Route path="/survey/:surveyId/edit" element={<EditSurvey />} />
@@ -70,7 +69,6 @@ function App() {
                 <Route path="/survey/:surveyId/results" element={<SurveyResults/>} />
               </Routes>
               <SideNav />
-            
             </div>
           </Router>
           <Snackbar

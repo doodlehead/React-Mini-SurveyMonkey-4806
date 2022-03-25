@@ -10,12 +10,12 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import PublishIcon from '@mui/icons-material/Publish';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 
 import RestClient from '../utils/RestClient';
 import AppContext from '../contexts/AppContext';
 import NewSurveyDialog from '../components/NewSurveyDialog';
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-import AllOutIcon from '@mui/icons-material/AllOut';
 
 const useStyles = makeStyles({
 });
@@ -36,13 +36,22 @@ const SurveyList = () => {
   const fetchSurveys = () => {
     RestClient.getSurveys()
       .then(res => {
-        console.log(res)
         setSurveys(res.data)
       })
-      .catch(err => appContext.setMessage?.({
-        text: 'Survey fetch failed',
-        severity: 'error'
-      }))
+      .catch(err => {
+        if (err.response.status === 401) {
+          navigate('/login')
+          appContext.setMessage?.({
+            text: 'You must login to access the Surveys page',
+            severity: 'error'
+          })
+        } else {
+          appContext.setMessage?.({
+            text: 'Survey fetch failed',
+            severity: 'error'
+          })
+        }
+      })
   }
 
   // Delete the selected survey
@@ -79,32 +88,39 @@ const SurveyList = () => {
       }))
   }
 
-  const handleAnswerSurvey = id => {
-    navigate(`/survey/${id}`)
+  const handleEdit = id => {
+    navigate(`/survey/${id}/edit`)
   }
 
   const renderResultsButton = survey => {
-    if (survey.closed){
+    if (survey.closed) {
       return (
         <IconButton
-        color="inherit"
-        onClick={() => handleViewSurveyResults(survey.id)}
+          color="inherit"
+          onClick={() => handleViewSurveyResults(survey.id)}
         >
-          <AllOutIcon/>
+          <AnalyticsIcon />
         </IconButton>
       )
     } else {
       return (
-        <IconButton
-        color="inherit"
-        onClick={() => handleCloseSurvey(survey.id)}
-        >
-          <CancelPresentationIcon/>
-        </IconButton>
+        <Button onClick={() => handleCloseSurvey(survey.id)}>
+          Close
+        </Button>
       )
     }
   }
-    
+
+  // Copy to clipboard
+  const handleCopy = id => {
+    navigator.clipboard.writeText(`${window.location.origin}/survey/${id}`);
+
+    appContext.setMessage?.({
+      text: 'Survey link copied to clipboard',
+      severity: 'success'
+    })
+  }
+
   // Render a survey on the surveys page
   const renderSurvey = survey => {
     return (
@@ -119,15 +135,38 @@ const SurveyList = () => {
           alignItems: 'center'
         }}>
         <Box sx={{ marginLeft: '12px' }}>{survey.id}.</Box>
-        <Button sx={{ flexGrow: 1 }} onClick={()=> handleAnswerSurvey(survey.id)} disabled={survey.closed}>
+        <Button
+          sx={{ flexGrow: 1 }}
+          onClick={() => handleCopy(survey.id)}
+          disabled={survey.closed}>
           {survey.name}
         </Button>
+        {
+          !survey.published && <IconButton
+            title="Publish"
+            color="inherit"
+            onClick={() => handlePublish(survey.id)}
+          >
+            <PublishIcon />
+          </IconButton>
+        }
         <IconButton
+          title="Delete"
           color="inherit"
           onClick={() => handleDeleteSurvey(survey.id)}
         >
           <DeleteIcon />
         </IconButton>
+        {
+          !survey.closed && !survey.published && 
+            <IconButton
+              title="Edit"
+              color="inherit"
+              onClick={() => handleEdit(survey.id)}
+            >
+              <EditIcon />
+            </IconButton>
+        }
         {renderResultsButton(survey)}
       </Box>
     )
@@ -142,6 +181,21 @@ const SurveyList = () => {
       })
       .catch(err => appContext.setMessage?.({
         text: 'Survey creation failed',
+        severity: 'error'
+      }));
+  }
+
+  const handlePublish = id => {
+    RestClient.publishSurvey(id)
+      .then(res => {
+        appContext.setMessage?.({
+          text: 'Survey published',
+          severity: 'success'
+        })
+        fetchSurveys()
+      })
+      .catch(err => appContext.setMessage?.({
+        text: 'Survey publish failed',
         severity: 'error'
       }));
   }

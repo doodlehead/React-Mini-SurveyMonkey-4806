@@ -1,12 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  IconButton,
-  Typography,
   Button,
   Box
 } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import RestClient from '../utils/RestClient';
@@ -16,6 +13,7 @@ import Question from '../components/Question';
 const AnswerSurvey = () => {
   const appContext = useContext(AppContext);
   const params = useParams();
+  const navigate = useNavigate();
   const [survey, setSurvey] = useState(null)
   const [answers, setAnswers] = useState([]);
   useEffect(() => {
@@ -57,10 +55,17 @@ const AnswerSurvey = () => {
     return temp;
   }
 
+  const handleBack = () => {
+    navigate('/survey')
+  }
+
   return (
     <Box sx={{ padding: '0 30px' }}>
       <h1>{survey?.name}</h1>
       <h3>Total Answers {answers.length}</h3>
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
+        <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleBack}>Back to Survey List</Button>
+      </Box>
       <Box>
         {survey?.questions?.map((q, index) =>
           <Question question={q} displayType={"results"} answers={getAnswers(index)}/>)}

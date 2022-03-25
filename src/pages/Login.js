@@ -12,17 +12,18 @@ import RestClient from '../utils/RestClient';
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  
   const navigate = useNavigate();
-  const {setLoggedIn, setMessage} = React.useContext(AppContext);
+  const {setMessage, setLoggedIn } = React.useContext(AppContext);
   
   const handleLogin = async (event) => {
     event.preventDefault();
     const username = event.target.username.value;
     const password = event.target.password.value;
-    RestClient.login({ username, password }).then(res => {
+    RestClient.login({ username, password })
+    .then(res => {
+      window.localStorage.setItem('login', 'true')
+      navigate('/survey');
       setLoggedIn(true);
-      navigate('/home');
     }).catch(err => setMessage?.({
       text: 'Login Failed',
       severity: 'error'
@@ -33,7 +34,6 @@ const Login = () => {
     <form onSubmit={handleLogin}>
       <Grid>
         <h1> Login </h1>
-
         <Grid>
           <FormControl margin="normal" required>
             <TextField

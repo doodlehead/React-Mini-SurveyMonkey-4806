@@ -1,17 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  IconButton,
-  Typography,
   Button,
   Box
 } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import RestClient from '../utils/RestClient';
 import AppContext from '../contexts/AppContext';
-import NewQuestionDialog from '../components/NewQuestionDialog';
 import Question from '../components/Question';
 
 const AnswerSurvey = () => {
@@ -29,7 +24,6 @@ const AnswerSurvey = () => {
   const fetchSurvey = () => {
     RestClient.getSurvey(params.surveyId)
       .then(res => {
-        console.log(res)
         setSurvey(res.data)
         setAnswer(Array(res.data.questions.length).fill(null))
       })
@@ -54,21 +48,30 @@ const AnswerSurvey = () => {
       }))
   }
 
-
   const onAnswer = (i, ans) => {
     const answerCopy = [...answer];
     answerCopy[i] = ans;
     setAnswer(answerCopy);
   }
 
+  const renderContent = () => {
+    if (survey?.closed) {
+      return 'Survey is closed'
+    } else if (!survey?.published) {
+      return 'Survey is not yet published'
+    } else {
+      return <Box>
+        {survey?.questions?.map((q, index) =>
+        <Question question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>)}
+        <Button onClick={answerSurvey} disabled={answer.some((ans) => {return ans === null || ans === ""})}>Submit</Button>
+      </Box>
+    }
+  }
+
   return (
     <Box sx={{ padding: '0 30px' }}>
       <h1>{survey?.name}</h1>
-      <Box>
-        {survey?.questions?.map((q, index) =>
-          <Question question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>)}
-      </Box>
-      <Button onClick={answerSurvey} disabled={answer.some((ans) => {return ans === null || ans === ""})}>Submit</Button>
+      {renderContent()}
     </Box>
   );
 }

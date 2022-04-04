@@ -36,7 +36,7 @@ const AnswerSurvey = () => {
   const answerSurvey = () => {
     RestClient.answerSurvey(params.surveyId, answer)
       .then(res => {
-        navigate("/survey")
+        navigate("/answered")
         appContext.setMessage?.({
           text: 'Survey Answered',
           severity: 'success'

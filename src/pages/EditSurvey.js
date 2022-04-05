@@ -80,25 +80,25 @@ const EditSurvey = () => {
       }))
   }
 
-  const handleQuestionEdit = id => {
-    // TODO
-  }
-
   const handleBack = () => {
     navigate('/survey')
   }
 
   return (
-    <Box sx={{ padding: '0 30px' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', padding: '0 30px' }}>
       <h1>Edit Survey: {survey?.name}</h1>
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleBack}>Back to Survey List</Button>
-        <Button variant="outlined" startIcon={<AddIcon />} onClick={handleClickOpen}>Add New Question</Button>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ mb: 3, flexBasis: '900px', display: 'flex', justifyContent: 'space-between' }}>
+          <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleBack}>Back to Survey List</Button>
+          <Button variant="outlined" startIcon={<AddIcon />} onClick={handleClickOpen}>Add New Question</Button>
+        </Box>
       </Box>
       <NewQuestionDialog open={open} handleClose={handleClose} onSubmit={handleSubmit} />
-      <Box style={{maxWidth: "50%", marginLeft:"25%"}}>
-        {survey?.questions?.map((q, i) =>
-          <Question key={i} question={q} onDelete={handleQuestionDelete} displayType={"display"} onEdit={handleQuestionEdit} />)}
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{flexBasis: "900px" }}>
+          {survey?.questions?.map((q, i) =>
+            <Question key={i} question={q} onDelete={handleQuestionDelete} displayType={"display"} />)}
+        </Box>
       </Box>
     </Box>
   );

@@ -60,7 +60,7 @@ const AnswerSurvey = () => {
     } else if (!survey?.published) {
       return 'Survey is not yet published'
     } else {
-      return <Box style={{maxWidth: "50%", marginLeft: "25%"}}>
+      return <Box style={{ maxWidth: '800px', margin: 'auto' }}>
         {survey?.questions?.map((q, index) =>
           <Question key={index} question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>
         )}
@@ -70,7 +70,7 @@ const AnswerSurvey = () => {
   }
 
   return (
-    <Box sx={{ padding: '0 30px' }}>
+    <Box sx={{ padding: '0 30px', minWidth: '350px' }}>
       <h1>{survey?.name}</h1>
       {renderContent()}
     </Box>

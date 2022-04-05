@@ -10,7 +10,6 @@ import {
   TextField
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import {
   PieChart,
   Pie,
@@ -26,12 +25,12 @@ import {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }) => {
+const Question = ({ question, displayType, onDelete, onAnswer, answers }) => {
   if (displayType === "display") {
     const renderQuestionDetails = () => {
       if (question.type === 'MC') {
         return <>
-          <ol style={{paddingLeft:"1%", marginTop: "0", marginBottom:"0"}}>
+          <ol style={{ width: 'fit-content', margin: 'auto' }}>
               {question.choices.map((c, i) => <li key={i}>{c}</li>)}
           </ol>
         </>
@@ -71,13 +70,6 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
           onClick={() => onDelete(question.id)}
         >
           <DeleteIcon />
-        </IconButton>
-        <IconButton
-          disabled
-          color="inherit"
-          onClick={() => onEdit(question.id)}
-        >
-          <EditIcon />
         </IconButton>
       </Box>
     )

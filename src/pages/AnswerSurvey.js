@@ -15,7 +15,16 @@ const AnswerSurvey = () => {
   const navigate = useNavigate();
   const [survey, setSurvey] = useState(null)
   const [answer, setAnswer] = useState([]);
+  const [completed, setCompleted] = useState([])
+
+  // Initialization
   useEffect(() => {
+    let cmp = localStorage.getItem('completed')
+    if (!cmp) {
+      cmp = []
+      localStorage.setItem('completed', JSON.stringify(cmp))
+    }
+    setCompleted(JSON.parse(cmp))
     // Fetch the survey on load
     fetchSurvey()
   }, []);
@@ -41,6 +50,9 @@ const AnswerSurvey = () => {
           text: 'Survey Answered',
           severity: 'success'
         })
+        const updated = [...completed, params.surveyId]
+        setCompleted(updated)
+        localStorage.setItem('completed', JSON.stringify(updated))
       })
       .catch(err => appContext.setMessage?.({
         text: 'Survey Answering failed',
@@ -59,6 +71,8 @@ const AnswerSurvey = () => {
       return 'Survey is closed'
     } else if (!survey?.published) {
       return 'Survey is not yet published'
+    } else if (completed.includes(params.surveyId)) {
+      return 'You have already completed the survey.'
     } else {
       return <Box style={{ maxWidth: '800px', margin: 'auto' }}>
         {survey?.questions?.map((q, index) =>

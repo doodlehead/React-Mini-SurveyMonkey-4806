@@ -96,7 +96,7 @@ const EditSurvey = () => {
         <Button variant="outlined" startIcon={<AddIcon />} onClick={handleClickOpen}>Add New Question</Button>
       </Box>
       <NewQuestionDialog open={open} handleClose={handleClose} onSubmit={handleSubmit} />
-      <Box>
+      <Box style={{maxWidth: "50%", marginLeft:"25%"}}>
         {survey?.questions?.map((q, i) =>
           <Question key={i} question={q} onDelete={handleQuestionDelete} displayType={"display"} onEdit={handleQuestionEdit} />)}
       </Box>

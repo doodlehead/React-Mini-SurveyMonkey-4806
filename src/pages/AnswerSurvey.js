@@ -36,7 +36,7 @@ const AnswerSurvey = () => {
   const answerSurvey = () => {
     RestClient.answerSurvey(params.surveyId, answer)
       .then(res => {
-        navigate("/survey")
+        navigate("/answered")
         appContext.setMessage?.({
           text: 'Survey Answered',
           severity: 'success'
@@ -60,7 +60,7 @@ const AnswerSurvey = () => {
     } else if (!survey?.published) {
       return 'Survey is not yet published'
     } else {
-      return <Box>
+      return <Box style={{maxWidth: "50%", marginLeft: "25%"}}>
         {survey?.questions?.map((q, index) =>
           <Question key={index} question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>
         )}

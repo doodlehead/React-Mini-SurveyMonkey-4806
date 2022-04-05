@@ -31,8 +31,9 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
     const renderQuestionDetails = () => {
       if (question.type === 'MC') {
         return <>
-          <Box>Choices:</Box>
-          {question.choices.map((c, i) => <Box key={i}>{c}</Box>)}
+          <ol style={{paddingLeft:"1%", marginTop: "0", marginBottom:"0"}}>
+              {question.choices.map((c, i) => <li key={i}>{c}</li>)}
+          </ol>
         </>
 
       } else if (question.type === 'RANGE') {
@@ -59,8 +60,9 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
         <Box sx={{ marginLeft: '12px' }}>{question.id}.</Box>
         <Typography sx={{ flexGrow: 1 }} component="div">
           <Box sx={{ flexGrow: 1 }}>
-            <Box>Prompt: {question.question}</Box>
-            <Box>Type: {question.type}</Box>
+            <Box style={{paddingBottom: "15px", fontSize: "1.5rem"}}>
+                Question: <i>"{question.question}"</i></Box>
+            <Box style={{paddingBottom: "10px"}}>Type: <b>{question.type}</b></Box>
             {renderQuestionDetails()}
           </Box>
         </Typography>

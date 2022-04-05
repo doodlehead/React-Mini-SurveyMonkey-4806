@@ -205,10 +205,10 @@ const SurveyList = () => {
 
   return (
     <div>
-      <h1>Surveys Page</h1>
+      <h1>Surveys</h1>
       <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setOpen(true)} sx={{ marginBottom: '24px' }}>Create New Survey</Button>
       <NewSurveyDialog open={open} handleClose={() => setOpen(false)} handleSubmit={handleCreateSurvey} />
-      <div>
+      <div style={{maxWidth: "50%", marginLeft: "25%"}}>
         {surveys.length === 0 ?
           <Typography variant="body1">No surveys yet</Typography> : surveys.map(renderSurvey)}
       </div>

@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AnswerSurvey from "./pages/AnswerSurvey"
 import SurveyResults from "./pages/SurveyResults";
+import Answered from "./pages/Answered"
 
 const darkTheme = createTheme({
   palette: {
@@ -67,6 +68,7 @@ function App() {
                 <Route path="/login" element={<Login />}/>
                 <Route path="/register" element={<Register />}/>
                 <Route path="/survey/:surveyId/results" element={<SurveyResults/>} />
+                <Route path="/answered" element={<Answered />}/>
               </Routes>
               <SideNav />
             </div>

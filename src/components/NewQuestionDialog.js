@@ -43,7 +43,7 @@ const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
     if (qType === 'MC') {
       values.choices = choices.split(',').filter(Boolean); // filter ignores empty spaces
       if (values.choices.length > 1) {
-        values.choices = choices.split(',').map(elem => elem.trim())
+        values.choices = values.choices.map(elem => elem.trim())
       } else {
         appContext.setMessage?.({
           text: 'Please enter 2 or more choices',

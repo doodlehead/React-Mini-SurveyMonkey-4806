@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Button,
   TextField,
@@ -13,9 +13,11 @@ import {
   MenuItem,
   Box
 } from '@mui/material'
+import AppContext from "../contexts/AppContext";
 
 // Form to create a new survey
 const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
+  const appContext = useContext(AppContext);
   const [qType, setQType] = React.useState('');
   const [prompt, setPrompt] = React.useState('');
   const [min, setMin] = React.useState(1);
@@ -29,9 +31,27 @@ const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
       type: qType,
     };
 
+    if (values.question === "") {
+      appContext.setMessage?.({
+        text: 'Please enter a question',
+        severity: 'error'
+      })
+      return;
+    }
+
     // Optional fields depending on question type
     if (qType === 'MC') {
-      values.choices = choices.split(',').map(elem => elem.trim())
+      values.choices = choices.split(',').filter(Boolean); // filter ignores empty spaces
+      if (values.choices.length > 1) {
+        values.choices = values.choices.map(elem => elem.trim())
+      } else {
+        appContext.setMessage?.({
+          text: 'Please enter 2 or more choices',
+          severity: 'error'
+        })
+        return;
+      }
+
     } else if (qType === 'RANGE') {
       values.min = min;
       values.max = max;

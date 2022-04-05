@@ -60,7 +60,7 @@ const AnswerSurvey = () => {
     } else if (!survey?.published) {
       return 'Survey is not yet published'
     } else {
-      return <Box>
+      return <Box style={{maxWidth: "50%", marginLeft: "25%"}}>
         {survey?.questions?.map((q, index) =>
         <Question question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>)}
         <Button onClick={answerSurvey} disabled={answer.some((ans) => {return ans === null || ans === ""})}>Submit</Button>

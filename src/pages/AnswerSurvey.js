@@ -62,7 +62,8 @@ const AnswerSurvey = () => {
     } else {
       return <Box>
         {survey?.questions?.map((q, index) =>
-        <Question question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>)}
+          <Question key={index} question={q} displayType={"answer"} onAnswer={onAnswer.bind(null, index)}/>
+        )}
         <Button onClick={answerSurvey} disabled={answer.some((ans) => {return ans === null || ans === ""})}>Submit</Button>
       </Box>
     }

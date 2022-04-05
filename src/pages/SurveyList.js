@@ -23,9 +23,10 @@ const useStyles = makeStyles({
 const SurveyList = () => {
   // const classes = useStyles();
   const appContext = useContext(AppContext);
+  const { setLoggedIn } = useContext(AppContext);
   const navigate = useNavigate();
   const [surveys, setSurveys] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     // Fetch the surveys on load
@@ -39,7 +40,9 @@ const SurveyList = () => {
         setSurveys(res.data)
       })
       .catch(err => {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
+          window.localStorage.removeItem('login')
+          setLoggedIn(false)
           navigate('/login')
           appContext.setMessage?.({
             text: 'You must login to access the Surveys page',

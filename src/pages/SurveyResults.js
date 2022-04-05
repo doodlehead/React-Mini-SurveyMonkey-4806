@@ -60,7 +60,7 @@ const AnswerSurvey = () => {
   }
 
   return (
-    <Box sx={{ padding: '0 30px' }}>
+    <Box sx={{ padding: '0 30px', minWidth: 350 }}>
       <h1>{survey?.name}</h1>
       <h3>Total Answers {answers.length}</h3>
       <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>

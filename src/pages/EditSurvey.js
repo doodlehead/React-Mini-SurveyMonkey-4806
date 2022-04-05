@@ -97,8 +97,8 @@ const EditSurvey = () => {
       </Box>
       <NewQuestionDialog open={open} handleClose={handleClose} onSubmit={handleSubmit} />
       <Box>
-        {survey?.questions?.map(q =>
-          <Question question={q} onDelete={handleQuestionDelete} displayType={"display"} onEdit={handleQuestionEdit} />)}
+        {survey?.questions?.map((q, i) =>
+          <Question key={i} question={q} onDelete={handleQuestionDelete} displayType={"display"} onEdit={handleQuestionEdit} />)}
       </Box>
     </Box>
   );

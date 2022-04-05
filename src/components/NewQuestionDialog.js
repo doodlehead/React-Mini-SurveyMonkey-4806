@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   TextField,
@@ -16,11 +16,17 @@ import {
 
 // Form to create a new survey
 const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
-  const [qType, setQType] = React.useState('');
-  const [prompt, setPrompt] = React.useState('');
-  const [min, setMin] = React.useState(1);
-  const [max, setMax] = React.useState(10);
-  const [choices, setChoices] = React.useState('');
+  const [qType, setQType] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [min, setMin] = useState(1);
+  const [max, setMax] = useState(10);
+  const [choices, setChoices] = useState('');
+  const [valid, setValid] = useState();
+
+  // validate min and max values
+  useEffect(() => {
+    setValid(min && max && (parseInt(max) > parseInt(min)))
+  }, [min, max])
 
   // Return the relevant values
   const handleSubmit = () => {
@@ -56,9 +62,11 @@ const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
       return <Box sx={{
         display: 'flex',
         alignItems: 'center',
-        '& > :not(style)': { mr: 1 }
+        '& > :not(style)': { mr: 1, mb: 1 }
       }}>
         <TextField
+          error={!valid}
+          helperText={!valid && "Min must be smaller than max"}
           value={min}
           onChange={e => setMin(e.target.value)}
           margin="normal"
@@ -67,6 +75,8 @@ const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
           variant="standard"
         />
         <TextField
+          error={!valid}
+          helperText={!valid && "Max must be larger than min"}
           value={max}
           onChange={e => setMax(e.target.value)}
           margin="normal"
@@ -114,7 +124,7 @@ const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Create</Button>
+        <Button onClick={handleSubmit} disabled={!valid}>Create</Button>
       </DialogActions>
     </Dialog>
   );

@@ -31,7 +31,7 @@ const NewQuestionDialog = ({ open, handleClose, onSubmit }) => {
       type: qType,
     };
 
-    if (values.question == "") {
+    if (values.question === "") {
       appContext.setMessage?.({
         text: 'Please enter a question',
         severity: 'error'

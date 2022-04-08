@@ -60,15 +60,19 @@ const AnswerSurvey = () => {
   }
 
   return (
-    <Box sx={{ padding: '0 30px' }}>
+    <Box sx={{ padding: '0 30px', minWidth: 350 }}>
       <h1>{survey?.name}</h1>
       <h3>Total Answers {answers.length}</h3>
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleBack}>Back to Survey List</Button>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ mb: 3, flexBasis: '1200px', display: 'flex', justifyContent: 'space-between' }}>
+          <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleBack}>Back to Survey List</Button>
+        </Box>
       </Box>
-      <Box>
-        {survey?.questions?.map((q, index) =>
-          <Question question={q} displayType={"results"} answers={getAnswers(index)}/>)}
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{flexBasis: "1200px" }}>
+          {survey?.questions?.map((q, index) =>
+            <Question question={q} displayType={"results"} answers={getAnswers(index)}/>)}
+        </Box>
       </Box>
     </Box>
   );

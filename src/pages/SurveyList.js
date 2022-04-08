@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { makeStyles } from '@mui/styles';
 import {
   IconButton,
   Typography,
@@ -17,15 +16,13 @@ import RestClient from '../utils/RestClient';
 import AppContext from '../contexts/AppContext';
 import NewSurveyDialog from '../components/NewSurveyDialog';
 
-const useStyles = makeStyles({
-});
-
 const SurveyList = () => {
   // const classes = useStyles();
   const appContext = useContext(AppContext);
+  const { setLoggedIn } = useContext(AppContext);
   const navigate = useNavigate();
   const [surveys, setSurveys] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     // Fetch the surveys on load
@@ -39,7 +36,9 @@ const SurveyList = () => {
         setSurveys(res.data)
       })
       .catch(err => {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
+          window.localStorage.removeItem('login')
+          setLoggedIn(false)
           navigate('/login')
           appContext.setMessage?.({
             text: 'You must login to access the Surveys page',
@@ -201,15 +200,19 @@ const SurveyList = () => {
   }
 
   return (
-    <div>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <h1>Surveys</h1>
-      <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setOpen(true)} sx={{ marginBottom: '24px' }}>Create New Survey</Button>
+      <Box>
+        <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setOpen(true)} sx={{ marginBottom: '24px' }}>Create New Survey</Button>
+      </Box>
       <NewSurveyDialog open={open} handleClose={() => setOpen(false)} handleSubmit={handleCreateSurvey} />
-      <div style={{maxWidth: "50%", marginLeft: "25%"}}>
-        {surveys.length === 0 ?
-          <Typography variant="body1">No surveys yet</Typography> : surveys.map(renderSurvey)}
-      </div>
-    </div>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{flexBasis: "900px" }}>
+          {surveys.length === 0 ?
+            <Typography variant="body1">No surveys yet</Typography> : surveys.map(renderSurvey)}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

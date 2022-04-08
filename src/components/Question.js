@@ -2,7 +2,6 @@ import React from 'react'
 import {
   IconButton,
   Typography,
-  Button,
   InputLabel,
   Box,
   Select,
@@ -11,18 +10,29 @@ import {
   TextField
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { PieChart, Pie, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }) => {
+const Question = ({ question, displayType, onDelete, onAnswer, answers }) => {
   if (displayType === "display") {
     const renderQuestionDetails = () => {
       if (question.type === 'MC') {
         return <>
-            <ol style={{paddingLeft:"1%", marginTop: "0", marginBottom:"0"}}>
-                {question.choices.map(c => <li>{c}</li>)}
-            </ol>
+          <ol style={{ width: 'fit-content', margin: 'auto' }}>
+              {question.choices.map((c, i) => <li key={i}>{c}</li>)}
+          </ol>
         </>
 
       } else if (question.type === 'RANGE') {
@@ -47,7 +57,7 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
           alignItems: 'center'
         }}>
         <Box sx={{ marginLeft: '12px' }}>{question.id}.</Box>
-        <Typography sx={{ flexGrow: 1 }}>
+        <Typography sx={{ flexGrow: 1 }} component="div">
           <Box sx={{ flexGrow: 1 }}>
             <Box style={{paddingBottom: "15px", fontSize: "1.5rem"}}>
                 Question: <i>"{question.question}"</i></Box>
@@ -61,16 +71,9 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
         >
           <DeleteIcon />
         </IconButton>
-        <IconButton
-          disabled
-          color="inherit"
-          onClick={() => onEdit(question.id)}
-        >
-          <EditIcon />
-        </IconButton>
       </Box>
     )
-  } else if (displayType === "answer"){
+  } else if (displayType === "answer") {
 
     const renderQuestionDetails = () => {
       if (question.type === 'MC') {
@@ -81,37 +84,37 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
             label="Select an Answer"
             onChange={e => onAnswer(e.target.value)}
           >
-            {question.choices.map(q =>
-              <MenuItem value={q}>{q}</MenuItem>
+            {question.choices.map((q, i) =>
+              <MenuItem key={i} value={q}>{q}</MenuItem>
             )}
           </Select>
         </FormControl>
 
       } else if (question.type === 'RANGE') {
-          const onRangeChange = e => {
-
-              if (e.target.value === ""){
-                onAnswer(null);
-                return;
-              }
-              
-              if (e.target.value > question.max){
-                e.target.value = question.max;
-              } else if (e.target.value < question.min){
-                e.target.value = question.min;
-              }
-              onAnswer(parseInt(e.target.value));
+        const onRangeChange = e => {
+          if (e.target.value === ""){
+            onAnswer(null);
+            return;
           }
-          return <FormControl fullWidth>
-              <TextField
-                  type="number"
-                  inputProps={{
-                      max: question.max, min: question.min
-                  }}
-                  label={`Range ${question.min} to ${question.max}`}
-                  onChange={e => onRangeChange(e)}
-              />
-          </FormControl>
+          
+          if (e.target.value > question.max){
+            e.target.value = question.max;
+          } else if (e.target.value < question.min){
+            e.target.value = question.min;
+          }
+          onAnswer(parseInt(e.target.value));
+        }
+
+        return <FormControl fullWidth>
+          <TextField
+            type="number"
+            inputProps={{
+                max: question.max, min: question.min
+            }}
+            label={`Range ${question.min} to ${question.max}`}
+            onChange={e => onRangeChange(e)}
+          />
+        </FormControl>
       } else {
         return <FormControl fullWidth>
         <TextField
@@ -134,18 +137,16 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
           alignItems: 'center'
         }}>
         <Box sx={{ marginLeft: '12px' }}>{question.id}.</Box>
-        <Typography sx={{ flexGrow: 1 }}>
+        <Typography sx={{ flexGrow: 1 }} component="div">
           <Box sx={{ flexGrow: 1 }}>
             <h3>{question.question}</h3>
             <Box px={5}>{renderQuestionDetails()}</Box>
-
           </Box>
         </Typography>
       </Box>
     )
   } else {
     //show results and graph 
-    
     const renderQuestionDetails = () => {
       if (question.type === 'MC') {
         const d = {};
@@ -160,67 +161,75 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
 
         const data = [];
         for (const [name, value] of Object.entries(d)){
-          data.push({name, value});
+          if (value > 0) {
+            data.push({name, value}); // Don't show selections with 0 occurences
+          }
+        }
+
+        if (data.length === 0) {
+          return 'No answers collected'
         }
         
-        const renderCustomizedLabel = (payload) => {
-          return `${payload.payload.name} (${payload.payload.value})` 
-        };
+        const renderCustomizedLabel = payload => `${payload.payload.name} (${payload.payload.value})`
 
-        return <PieChart width={500} height={500}>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            isAnimationActive={false}
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="value"
-            label={renderCustomizedLabel}
-          >
-          </Pie>
-          {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill="#8884d8" />
-            ))}
-        </PieChart>
+        return <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              innerRadius={60}
+              dataKey="value"
+              label={renderCustomizedLabel}
+            >
+              {data.map((entry, index) => 
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              )}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
 
       } else if (question.type === 'RANGE') {
+        // Return a histogram for range questions
         const d = {};
+        // One bin for each integer in the range
         for (let i = question.min; i <= question.max; i++){
           d[i] = 0;
         }
+        // Count occurences
         for (const i of answers){
           d[i] += 1;
         }
 
         const data = [];
-        for (const [name, value] of Object.entries(d)){
+        for (const [name, value] of Object.entries(d)) {
           data.push({name, value});
         }
 
-        return <BarChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey="value" fill="#8884d8" />
-      </BarChart>
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              width={500}
+              height={300}
+              data={data}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="value" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        )
       } else {
-        return <>
-          {answers.map(a =>
-              <Box>{a}</Box>
-            )}
-        </>
+        return answers.map((a, i) => <Box key={i}>{a}</Box>)
       }
     }
 
@@ -236,7 +245,7 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
           alignItems: 'center'
         }}>
         <Box sx={{ marginLeft: '12px' }}>{question.id}.</Box>
-        <Typography sx={{ flexGrow: 1 }}>
+        <Typography sx={{ flexGrow: 1, width: 0 }} component="div">
           <Box sx={{ flexGrow: 1 }}>
             <Box>Prompt: {question.question}</Box>
             <Box>Type: {question.type}</Box>
@@ -248,7 +257,6 @@ const Question = ({ question, displayType, onDelete, onEdit, onAnswer, answers }
       </Box>
     )
   }
-
 };
 
 export default Question;
